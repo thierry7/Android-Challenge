@@ -1,6 +1,12 @@
 package com.podium.technicalchallenge
 
-import com.apollographql.apollo.coroutines.await
+import com.google.gson.Gson
+import com.podium.technicalchallenge.entity.MovieEntity
+import com.podium.technicalchallenge.entity.MovieResponse
+import com.podium.technicalchallenge.network.ApiClient
+import com.podium.technicalchallenge.network.queries.Queries
+import com.podium.technicalchallenge.network.retrofit.GraphQLService
+import org.json.JSONObject
 
 
 sealed class Result<out R> {
@@ -10,10 +16,17 @@ sealed class Result<out R> {
 
 class Repo {
 
-    suspend fun getMovies(): Result<GetMoviesQuery.Data?> {
-        val response = ApiClient.getInstance().movieClient.query(GetMoviesQuery()).await()
-        return if (response.data != null) {
-            Result.Success(response.data)
+    suspend fun getMovies(): Result<List<MovieEntity>?> {
+        val paramObject = JSONObject()
+        paramObject.put(
+            "query", Queries.getMoviesQuery()
+        )
+
+        val response = ApiClient.getInstance().provideRetrofitClient().create(GraphQLService::class.java).postGetMovies(paramObject.toString())
+        val jsonBody = response.body()
+        val data = Gson().fromJson(jsonBody, MovieResponse::class.java)
+        return if (data != null) {
+            Result.Success(data.data.movies)
         } else {
             Result.Error(java.lang.Exception())
         }
