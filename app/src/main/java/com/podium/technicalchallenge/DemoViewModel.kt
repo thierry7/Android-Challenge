@@ -8,23 +8,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class DemoViewModel : ViewModel() {
-    val TAG = "DemoViewModel"
 
     fun getMovies() {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = try {
-                Repo.getInstance().getMovies()
-            } catch (e: Exception) {
-                Result.Error(e)
-            }
-            when (result) {
-                is Result.Success<List<MovieEntity>?> -> {
-                    Log.d(TAG, "movies= " + result.data)
-                }
-                else -> {
-                    Log.e(TAG, "movies= " + result)
-                }
-            }
+            val movies = Repo.getInstance().getMovies()
+            Log.d("DemoViewModel", "movies=$movies")
         }
     }
+
 }

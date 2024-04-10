@@ -8,5 +8,5 @@ import retrofit2.http.POST
 interface GraphQLService {
     @Headers("Content-Type: application/json")
     @POST("graphql")
-    suspend fun postGetMovies(@Body body: String): Response<String>
+    suspend fun query(@Body body: String): Response<String>
 }

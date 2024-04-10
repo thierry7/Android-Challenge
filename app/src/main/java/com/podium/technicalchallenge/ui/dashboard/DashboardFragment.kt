@@ -4,46 +4,43 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.textfield.TextInputLayout
 import com.podium.technicalchallenge.DemoViewModel
-import com.podium.technicalchallenge.databinding.FragmentDashboardBinding
 
 class DashboardFragment : Fragment() {
 
-    private val viewModel: DemoViewModel by activityViewModels()
-    private var _binding: FragmentDashboardBinding? = null
-    private val binding get() = _binding!!
-
-    private lateinit var tvTitle: TextView
+    private val viewModel: DemoViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentDashboardBinding.inflate(inflater)
-        return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+        return ComposeView(requireContext()).apply {
+            setContent {
+                DashboardScreen()
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        tvTitle = binding.tvTitle
-        tvTitle.text = "Podium Challenge"
-
         viewModel.getMovies()
     }
 
-    companion object {
-        fun newInstance() = DashboardFragment()
+}
+
+@Composable
+fun DashboardScreen() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text("Podium Challenge")
     }
 }
 
