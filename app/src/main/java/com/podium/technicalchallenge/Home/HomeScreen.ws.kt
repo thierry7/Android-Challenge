@@ -24,11 +24,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.podium.technicalchallenge.Home.HomeViewmodel
@@ -53,17 +55,28 @@ fun HomeScreen(
                     .fillMaxWidth()
                     .height(1.dp)
                     .weight(1f)
+
             ) {
-                Column(Modifier.fillMaxWidth()){
+                Column(Modifier.fillMaxWidth()
+                    .background(
+                    brush = Brush.horizontalGradient(
+                        listOf(
+                            Color.Gray,
+                            Color.Transparent
+                        )
+                    )
+                )
+                ){
                     Text(
                         text = "Movies: Top 5",
                         modifier = Modifier
                             .padding(8.dp),
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 38.sp,
 
                         )
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     Box(
                         modifier = Modifier
@@ -88,24 +101,55 @@ fun HomeScreen(
                     .weight(1f)
             ) {
                 // Content for the first area
-                Text(text = "Browse By Genre")
+                Text(
+                    text = "Browse By Genre",
+                    modifier = Modifier
+                        .padding(8.dp),
+                    fontWeight = FontWeight.Bold
+                )
+
 
             }
             Spacer(modifier = Modifier.height(5.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.Blue)
                     .height(1.dp)
                     .weight(1f)
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            listOf(
+                                Color.Gray,
+                                Color.Transparent
+                            )
+                        )
+                    )
             ) {
-                Text(text = "Browse By ALL")
+                Column {
+                    Text(
+                        text = "Browse By ALL",
+                        modifier = Modifier
+                            .padding(8.dp),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 38.sp,
 
+                        )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ){
+                        Scaffold(
+                            content = { padding ->
+
+                                MovieListAll(uiState, padding, onMovieClicked)
+                            }
+                        )
+                    }
+                }
             }
-
         }
     }
-
 }
 
 @Composable
@@ -147,6 +191,47 @@ fun MovieList(
         }
     }
 }
+
+
+
+@Composable
+fun MovieListAll(
+    uiState: UiState<List<Movies>>,
+    padding: PaddingValues,
+    onMovieClicked: (Movies) -> Unit
+) {
+    when (uiState) {
+        is UiState.Loading -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        is UiState.Success -> {
+            val topMovies = uiState.data
+            LazyRow {
+                items(topMovies.size){index ->
+
+                    MovieItem(movie = topMovies[index], onMovieClicked)
+                }
+            }
+        }
+        is UiState.Error -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Error: ${uiState.message}", style = typography.bodyLarge)
+            }
+        }
+    }
+}
 @Composable
 fun MovieItem(movie: Movies, onMovieClicked: (Movies) -> Unit) {
 
@@ -154,7 +239,8 @@ fun MovieItem(movie: Movies, onMovieClicked: (Movies) -> Unit) {
         model = movie.posterPath,
         contentDescription = null,
         error = painterResource(id =  R.drawable.ic_home_black_24dp),
-        modifier = Modifier.clickable { onMovieClicked(movie) }
+        modifier = Modifier
+            .clickable { onMovieClicked(movie) }
             .padding(6.dp)
             .wrapContentHeight()
             .fillMaxHeight()
@@ -162,6 +248,3 @@ fun MovieItem(movie: Movies, onMovieClicked: (Movies) -> Unit) {
         contentScale = ContentScale.Crop
     )
 }
-
-
-

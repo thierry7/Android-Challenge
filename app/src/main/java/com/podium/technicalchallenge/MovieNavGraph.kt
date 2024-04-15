@@ -4,7 +4,6 @@ import HomeScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -15,14 +14,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.podium.technicalchallenge.Genre.GenreScreen
 import com.podium.technicalchallenge.MovieDetails.MovieDetailScreen
-import com.podium.technicalchallenge.TodoDestinationsArgs.GENRE_NAME_ARG
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun MovieNavGraph(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
     startDestination: String = Screen.MainScreen.route,
     navActions: MovieNavigationActions = remember(navController) {
         MovieNavigationActions(navController)
@@ -30,7 +26,6 @@ fun MovieNavGraph(
 
 ) {
     val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = currentNavBackStackEntry?.destination?.route ?: startDestination
 
     NavHost(
         navController = navController,
@@ -57,13 +52,14 @@ fun MovieNavGraph(
             )
         }
 
-        composable(Screen.GenreScreen.route,
+        composable(
+            route = Screen.GenreScreen.route + "{genre}",
             arguments = listOf(
-                navArgument(GENRE_NAME_ARG) { type = NavType.StringType; nullable = false }
+                navArgument(name = "genre") { type = NavType.StringType; nullable = false }
             )
         ) { entry ->
             GenreScreen(
-                genreName = entry.arguments?.getString(GENRE_NAME_ARG)!!
+                genreName = entry.arguments?.getString("genre")!!
             )
         }
     }

@@ -202,9 +202,6 @@ fun Rating(movie: Movies, modifier: Modifier.Companion) {
             contentDescription = null, tint = Color.White )
         Text( text = movie.releaseDate, modifier = modifier.padding(start = 6.dp), color = Color.White)
 
-
-
-
     }
 
 }
