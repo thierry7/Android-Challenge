@@ -3,4 +3,6 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="task_not_foud">Task Not found</string>
+    <string name="task_not_able_to_load">Task not able to Load</string>
 </resources>
