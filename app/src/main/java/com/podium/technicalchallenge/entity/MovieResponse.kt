@@ -7,12 +7,11 @@ data class MovieResponse(
 )
 @Serializable
 data class MovieData(
-
-    val movies: List<Movies>,
-    val movie: Movies
+    val movies: List<Movie>,
+    val movie: Movie
 )
 @Serializable
-data class Movies(
+data class Movie(
     val id: Int,
     val originalLanguage: String,
     val originalTitle: String,
@@ -38,4 +37,14 @@ data class Cast(
 data class Director(
     val id: Int,
     val name: String
+)
+
+@Serializable
+data class GenresResponse(
+    val data: GenresData
+)
+
+@Serializable
+data class GenresData(
+    val genres: List<String>
 )

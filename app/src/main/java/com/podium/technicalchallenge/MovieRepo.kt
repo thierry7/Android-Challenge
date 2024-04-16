@@ -1,18 +1,18 @@
 package com.podium.technicalchallenge
-import com.podium.technicalchallenge.entity.Movies
+import com.podium.technicalchallenge.entity.Movie
 import kotlinx.coroutines.flow.Flow
 
 interface MovieRepo {
 
-    suspend fun getMovieStream(): Flow<List<Movies>>
+    suspend fun getMovieStream(): Flow<List<Movie>>
 
-    suspend fun getMovieStream(movieId: Int): Flow<Movies>
-
-
-    suspend fun getMovie(movieName: String): Movies
+    suspend fun getMovieStream(movieId: Int): Flow<Movie>
 
 
-    suspend fun getMoviesByGenre(genreName: String): List<Movies>
+    suspend fun getGenres(): Flow<List<String>>
+
+
+    suspend fun getMoviesByGenre(genreName: String): List<Movie>
 
 
 

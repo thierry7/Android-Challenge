@@ -1,6 +1,5 @@
 package com.podium.technicalchallenge.MovieDetails
 
-import android.text.style.TtsSpan.TextBuilder
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,7 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.podium.technicalchallenge.R
 import com.podium.technicalchallenge.UiState
-import com.podium.technicalchallenge.entity.Movies
+import com.podium.technicalchallenge.entity.Movie
 
 @Composable
 fun MovieDetailScreen(
@@ -52,7 +51,7 @@ fun MovieDetailScreen(
 
     Scaffold { padding ->
 
-        viewModel.fetchUsers(movieId.toInt())
+        viewModel.fetchMoviDetails(movieId.toInt())
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
         when (uiState) {
             is UiState.Loading -> {
@@ -66,7 +65,7 @@ fun MovieDetailScreen(
                 }
             }
             is UiState.Success -> {
-                val movie = (uiState as UiState.Success<Movies>).data
+                val movie = (uiState as UiState.Success<Movie>).data
 
                 Box(
                     modifier = Modifier.fillMaxWidth(),
@@ -120,7 +119,7 @@ fun MovieDetailScreen(
 }
 
 @Composable
-fun TextBuilderGenres(icon: ImageVector, title: String, bodyText: Movies) {
+fun TextBuilderGenres(icon: ImageVector, title: String, bodyText: Movie) {
     Row{
 
         Icon(
@@ -152,7 +151,7 @@ fun TextBuilderGenres(icon: ImageVector, title: String, bodyText: Movies) {
 }
 
 @Composable
-fun TextBuilder(icon: ImageVector, title: String, bodyText: Movies){
+fun TextBuilder(icon: ImageVector, title: String, bodyText: Movie){
     Row{
 
         Icon(
@@ -177,12 +176,12 @@ fun TextBuilder(icon: ImageVector, title: String, bodyText: Movies){
 }
 
 @Composable
-fun ImageRow(movie: Movies) {
+fun ImageRow(movie: Movie) {
 
 }
 
 @Composable
-fun Rating(movie: Movies, modifier: Modifier.Companion) {
+fun Rating(movie: Movie, modifier: Modifier.Companion) {
 
     Row(modifier= modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
 
@@ -207,7 +206,7 @@ fun Rating(movie: Movies, modifier: Modifier.Companion) {
 }
 
 @Composable
-fun BackgroundPoster(movie: Movies){
+fun BackgroundPoster(movie: Movie){
 
     Box(
         modifier = Modifier
@@ -242,7 +241,7 @@ fun BackgroundPoster(movie: Movies){
 }
 
 @Composable
-fun ForeGroundPoster(movie: Movies){
+fun ForeGroundPoster(movie: Movie){
     Box(
         modifier = Modifier
             .wrapContentHeight()

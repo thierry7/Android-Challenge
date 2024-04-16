@@ -1,6 +1,6 @@
 package com.podium.technicalchallenge
 
-import com.podium.technicalchallenge.entity.Movies
+import com.podium.technicalchallenge.entity.Movie
 import com.podium.technicalchallenge.network.queries.Queries
 import com.podium.technicalchallenge.network.retrofit.GraphQLService
 import kotlinx.coroutines.flow.Flow
@@ -17,14 +17,14 @@ class DefaultRepo @Inject constructor(
 
 
 
-    override suspend fun getMovieStream() : Flow<List<Movies>> {
+    override suspend fun getMovieStream() : Flow<List<Movie>> {
         val requestBody =
             "{\"query\":\"${Queries.getMoviesQuery()}\"}".toRequestBody("application/json".toMediaTypeOrNull())
 
         return flow {
             val response = retrofit
                 .create(GraphQLService::class.java)
-                .query(requestBody)
+                .queryListMovies(requestBody)
 
             if (response.isSuccessful) {
                 val movieResponse = response.body()
@@ -45,7 +45,7 @@ class DefaultRepo @Inject constructor(
             println("Exception occurred: $e")
         }
     }
-    override suspend fun getMovieStream(movieId: Int): Flow<Movies> {
+    override suspend fun getMovieStream(movieId: Int): Flow<Movie> {
         val requestBody =
             "{\"query\":\"${Queries.getMovieQuery(movieId)}\"}".toRequestBody("application/json".toMediaTypeOrNull())
 
@@ -54,21 +54,40 @@ class DefaultRepo @Inject constructor(
                 .create(GraphQLService::class.java)
                 .queryMovie(requestBody)
 
-            println("===>${response.body()}")
-
             if(response.isSuccessful){
+
                 response.body()?.let { emit(it.data.movie) }
             }
-
+            else{
+                throw IllegalStateException("Failed to fetch movie: ${response.code()}")
+            }
         }
+    }
+    override suspend fun getGenres(): Flow<List<String>> {
+        val requestBody =
+            "{\"query\":\"${Queries.getGenresQuery()}\"}".toRequestBody("application/json".toMediaTypeOrNull())
 
+        return flow {
+            val response = retrofit
+                .create(GraphQLService::class.java)
+                .queryGenres(requestBody)
+            if(response.isSuccessful){
+                val genres = response.body()
+                if (genres != null) {
+                    println("===> $genres")
+                    emit(genres.data.genres)
+                } else {
+                    emit(emptyList())
+                }
+
+            }else{
+                throw IllegalStateException("Failed to fetch genres: ${response.code()}")
+
+            }
+        }
     }
 
-    override suspend fun getMovie(movieName: String): Movies {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getMoviesByGenre(genreName: String): List<Movies> {
+    override suspend fun getMoviesByGenre(genreName: String): List<Movie> {
         TODO("Not yet implemented")
     }
 }

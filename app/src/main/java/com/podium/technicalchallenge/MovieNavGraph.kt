@@ -25,7 +25,6 @@ fun MovieNavGraph(
     }
 
 ) {
-    val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
 
     NavHost(
         navController = navController,
@@ -38,7 +37,11 @@ fun MovieNavGraph(
             HomeScreen(
                 onMovieClicked = {
                     movie -> navActions.navigateToMovieDetail(movie.id)
+                },
+                onGenreClicked = {
+                    genre -> navActions.navigateToMovieListPerGenre(genre)
                 }
+
             )
         }
         composable(
@@ -53,7 +56,7 @@ fun MovieNavGraph(
         }
 
         composable(
-            route = Screen.GenreScreen.route + "{genre}",
+            route = "${Screen.GenreScreen.route}/{genre}",
             arguments = listOf(
                 navArgument(name = "genre") { type = NavType.StringType; nullable = false }
             )

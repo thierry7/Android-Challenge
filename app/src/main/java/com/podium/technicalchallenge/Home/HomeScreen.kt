@@ -1,52 +1,62 @@
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Scaffold
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.Text
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.podium.technicalchallenge.Home.GenreDisplayScreen
 import com.podium.technicalchallenge.Home.HomeViewmodel
 import com.podium.technicalchallenge.R
 import com.podium.technicalchallenge.UiState
-import com.podium.technicalchallenge.entity.Movies
+import com.podium.technicalchallenge.entity.Movie
 import com.podium.technicalchallenge.ui.CustomizedTheme
 
 
 @Composable
 fun HomeScreen(
-    onMovieClicked : (Movies) -> Unit,
+    onMovieClicked : (Movie) -> Unit,
+    onGenreClicked: (String)-> Unit,
     viewmodel: HomeViewmodel = hiltViewModel(),
-    scaffoldState: ScaffoldState = rememberScaffoldState(),
 ) {
-    viewmodel.fetchUsers()
+    viewmodel.fetchMovies()
     val uiState by viewmodel.uiState.collectAsState()
     CustomizedTheme{
         Column(Modifier.fillMaxSize()){
@@ -54,7 +64,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(1.dp)
-                    .weight(1f)
+                    .weight(0.5f)
 
             ) {
                 Column(Modifier.fillMaxWidth()
@@ -98,7 +108,7 @@ fun HomeScreen(
                     .fillMaxWidth()
                     .background(Color.Red)
                     .height(1.dp)
-                    .weight(1f)
+                    .weight(0.1f)
             ) {
                 // Content for the first area
                 Text(
@@ -107,6 +117,7 @@ fun HomeScreen(
                         .padding(8.dp),
                     fontWeight = FontWeight.Bold
                 )
+                GenreDisplayScreen( viewmodel = viewmodel, onGenreClicked = onGenreClicked)
 
 
             }
@@ -115,7 +126,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(1.dp)
-                    .weight(1f)
+                    .weight(0.4f)
                     .background(
                         brush = Brush.horizontalGradient(
                             listOf(
@@ -154,9 +165,9 @@ fun HomeScreen(
 
 @Composable
 fun MovieList(
-    uiState: UiState<List<Movies>>,
+    uiState: UiState<List<Movie>>,
     padding: PaddingValues,
-    onMovieClicked: (Movies) -> Unit
+    onMovieClicked: (Movie) -> Unit
 ) {
     when (uiState) {
         is UiState.Loading -> {
@@ -196,9 +207,9 @@ fun MovieList(
 
 @Composable
 fun MovieListAll(
-    uiState: UiState<List<Movies>>,
+    uiState: UiState<List<Movie>>,
     padding: PaddingValues,
-    onMovieClicked: (Movies) -> Unit
+    onMovieClicked: (Movie) -> Unit
 ) {
     when (uiState) {
         is UiState.Loading -> {
@@ -232,19 +243,75 @@ fun MovieListAll(
         }
     }
 }
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MovieItem(movie: Movies, onMovieClicked: (Movies) -> Unit) {
+fun MovieItem(movie: Movie, onMovieClicked: (Movie) -> Unit) {
 
-    AsyncImage(
-        model = movie.posterPath,
-        contentDescription = null,
-        error = painterResource(id =  R.drawable.ic_home_black_24dp),
+    Card(
         modifier = Modifier
-            .clickable { onMovieClicked(movie) }
-            .padding(6.dp)
-            .wrapContentHeight()
-            .fillMaxHeight()
-            .clip(RoundedCornerShape(12.dp)),
-        contentScale = ContentScale.Crop
-    )
+            .wrapContentSize()
+            .padding(10.dp)
+            .clickable {
+                onMovieClicked(movie)
+            },
+        elevation = CardDefaults.cardElevation(8.dp)
+
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize().background(Color.Red),
+
+
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            AsyncImage(
+                model = movie.posterPath,
+                contentDescription = movie.title,
+                error = painterResource(id = R.drawable.ic_home_black_24dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(10.dp)),
+                contentScale = ContentScale.Crop
+            )
+            Column(
+                modifier = Modifier
+                    .width(190.dp)
+                    .background(Color.LightGray.copy(.7f))
+                    .padding(6.dp),
+
+            ) {
+                Text(
+                    text = movie.title,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .basicMarquee(),
+                    textAlign = TextAlign.Start,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 2,
+                    style = androidx.compose.ui.text.TextStyle(
+                        shadow = Shadow(
+                            color = Color(0xfffc6603),
+                            offset = Offset(1f, 1f),
+                            blurRadius = 3f
+                        )
+                    )
+
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(Modifier.align(Alignment.Start)) {
+                    Icon(imageVector = Icons.Rounded.Star, contentDescription = null)
+                    Text(
+                        text = movie.voteAverage.toString(),
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = 8.dp),
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Start,
+                        maxLines = 1
+                    )
+                }
+            }
+        }
+    }
 }
