@@ -1,6 +1,8 @@
-package com.podium.technicalchallenge.MovieDetails
+package com.podium.technicalchallenge.myScreens
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,8 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Scaffold
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -21,9 +21,9 @@ import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -37,83 +37,70 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.podium.technicalchallenge.viewModel.HomeViewmodel
 import com.podium.technicalchallenge.R
-import com.podium.technicalchallenge.UiState
 import com.podium.technicalchallenge.entity.Movie
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MovieDetailScreen(
     movieId: Long,
-    viewModel: MovieDetailsViewModel = hiltViewModel()
+    viewModel: HomeViewmodel = hiltViewModel()
 ) {
 
-    Scaffold { padding ->
 
-        viewModel.fetchMoviDetails(movieId.toInt())
-        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-        when (uiState) {
-            is UiState.Loading -> {
-                Box(
+    val movie by viewModel.getClickedMovie(movieId.toInt()).observeAsState()
+
+    if(movie != null){
+
+        Scaffold { padding ->
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.TopCenter
+
+            ){
+                BackgroundPoster(movie = movie)
+                ForeGroundPoster(movie = movie)
+
+                Column(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
-            is UiState.Success -> {
-                val movie = (uiState as UiState.Success<Movie>).data
-
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.TopCenter
+                        .padding(start = 20.dp, end = 20.dp, bottom = 50.dp)
+                        .align(Alignment.BottomCenter),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
 
                 ){
-                    BackgroundPoster(movie = movie)
-                    ForeGroundPoster(movie = movie)
 
-                    Column(
-                        modifier = Modifier
-                            .padding(start = 20.dp, end = 20.dp, bottom = 50.dp)
-                            .align(Alignment.BottomCenter),
-                        verticalArrangement = Arrangement.spacedBy(20.dp)
-
-                    ){
-
-                        Text(
-                            text = movie.title,
-                            modifier = Modifier.fillMaxWidth(),
-                            fontSize = 38.sp,
-                            color = Color.White,
-                            lineHeight = 40.sp,
-                            textAlign = TextAlign.Center,
+                    Text(
+                        text = movie!!.title,
+                        modifier = Modifier.fillMaxWidth().basicMarquee(),
+                        maxLines = 1,
+                        fontSize = 38.sp,
+                        color = Color.White,
+                        lineHeight = 40.sp,
+                        textAlign = TextAlign.Center,
 
                         )
-                        Rating(movie = movie, modifier = Modifier)
-                        TextBuilder(icon = Icons.Filled.Info, title ="Summary", bodyText = movie)
-                        TextBuilderGenres(icon = Icons.Filled.Person, title ="Genre", bodyText = movie)
-                        ImageRow(movie= movie)
+                    Rating(movie = movie!!, modifier = Modifier)
+                    TextBuilderSummary(icon = Icons.Filled.Info, title ="Summary", bodyText = movie!!)
+                    TextBuilderGenres(icon = Icons.Filled.Person, title ="Genre", bodyText = movie!!)
 
-                    }
-                }
 
-            }
-            is UiState.Error -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("Error: ${(uiState as UiState.Error).message}", style = MaterialTheme.typography.bodyLarge)
                 }
             }
+
         }
 
-
+    }
+    else{
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            androidx.compose.material3.CircularProgressIndicator()
+        }
     }
 
 }
@@ -139,26 +126,20 @@ fun TextBuilderGenres(icon: ImageVector, title: String, bodyText: Movie) {
         )
 
     }
-    var genres = ""
-    for(genre in bodyText.genres){
-        genres = "$genre"
-    }
 
-    Text(text = genres, color = Color.White)
+    Text(text = bodyText.genres.toString(), color = Color.White)
 
 
 
 }
 
 @Composable
-fun TextBuilder(icon: ImageVector, title: String, bodyText: Movie){
+fun TextBuilderSummary(icon: ImageVector, title: String, bodyText: Movie){
     Row{
-
         Icon(
             imageVector = icon,
             contentDescription = "person",
             tint = Color.White
-
         )
         Text(
             text = title,
@@ -166,19 +147,13 @@ fun TextBuilder(icon: ImageVector, title: String, bodyText: Movie){
                 .padding(start = 10.dp),
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.White
-
+            color = Color.White,
         )
-
     }
-    Text(text = bodyText.overview, color = Color.White)
 
+    Text(text = bodyText.overview, color = Color.White, maxLines = 3)
 }
 
-@Composable
-fun ImageRow(movie: Movie) {
-
-}
 
 @Composable
 fun Rating(movie: Movie, modifier: Modifier.Companion) {
@@ -206,7 +181,7 @@ fun Rating(movie: Movie, modifier: Modifier.Companion) {
 }
 
 @Composable
-fun BackgroundPoster(movie: Movie){
+fun BackgroundPoster(movie: Movie?){
 
     Box(
         modifier = Modifier
@@ -214,7 +189,7 @@ fun BackgroundPoster(movie: Movie){
             .background(Color.DarkGray)
     ){
         AsyncImage(
-            model = movie.posterPath,
+            model = movie!!.posterPath,
             contentDescription = movie.title,
             error = painterResource(id =  R.drawable.ic_home_black_24dp),
             modifier = Modifier
@@ -233,15 +208,12 @@ fun BackgroundPoster(movie: Movie){
                     ),
                     shape = RoundedCornerShape(16.dp)
                 )
-
             )
-
     }
-
 }
 
 @Composable
-fun ForeGroundPoster(movie: Movie){
+fun ForeGroundPoster(movie: Movie?){
     Box(
         modifier = Modifier
             .wrapContentHeight()
@@ -251,7 +223,7 @@ fun ForeGroundPoster(movie: Movie){
         contentAlignment = Alignment.TopCenter
     ){
         AsyncImage(
-            model = movie.posterPath,
+            model = movie!!.posterPath,
             contentDescription = movie.title,
             modifier = Modifier
                 .width(250.dp)

@@ -1,4 +1,4 @@
-package com.podium.technicalchallenge
+package com.podium.technicalchallenge.navigation
 
 import androidx.navigation.NavHostController
 

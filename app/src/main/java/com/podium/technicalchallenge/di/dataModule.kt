@@ -1,9 +1,7 @@
 package com.podium.technicalchallenge.di
 
-import com.podium.technicalchallenge.DefaultRepo
-import com.podium.technicalchallenge.MovieRepo
-import com.podium.technicalchallenge.NetWorkDataSource
-import com.podium.technicalchallenge.network.retrofit.GraphQLService
+import com.podium.technicalchallenge.network.DefaultRepo
+import com.podium.technicalchallenge.network.MovieRepo
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,7 +31,6 @@ object dataModule {
             .client(okHttpClient)
             .build()
     }
-
     @Provides
     @Singleton
     fun provideMyRepo(api: Retrofit): MovieRepo {
