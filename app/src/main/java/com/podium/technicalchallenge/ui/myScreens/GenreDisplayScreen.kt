@@ -1,4 +1,4 @@
-package com.podium.technicalchallenge.myScreens
+package com.podium.technicalchallenge.ui.myScreens
 
 //
 //@Composable

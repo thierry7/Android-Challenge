@@ -1,4 +1,4 @@
-package com.podium.technicalchallenge.myScreens
+package com.podium.technicalchallenge.ui.myScreens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background

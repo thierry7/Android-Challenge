@@ -1,4 +1,4 @@
-package com.podium.technicalchallenge
+package com.podium.technicalchallenge.ui
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

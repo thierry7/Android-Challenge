@@ -10,8 +10,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.podium.technicalchallenge.myScreens.GenreScreen
-import com.podium.technicalchallenge.myScreens.MovieDetailScreen
+import com.podium.technicalchallenge.ui.myScreens.GenreScreen
+import com.podium.technicalchallenge.ui.myScreens.MovieDetailScreen
 
 @Composable
 fun MovieNavGraph(
