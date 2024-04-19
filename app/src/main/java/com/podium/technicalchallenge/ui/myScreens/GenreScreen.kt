@@ -3,7 +3,6 @@ package com.podium.technicalchallenge.ui.myScreens
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,17 +13,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -49,38 +51,55 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.podium.technicalchallenge.R
 import com.podium.technicalchallenge.entity.LocalMovie
-import com.podium.technicalchallenge.entity.Movie
 import com.podium.technicalchallenge.viewModel.HomeViewmodel
 
 @Composable
 fun GenreScreen(
-    genreName : String,
+    genreName: String,
     viewmodel: HomeViewmodel = hiltViewModel()
 ) {
     viewmodel.getListMovieByGenre(genreName)
-    val genres = viewmodel.listOfMovieByGenre.observeAsState()
+    val genres by viewmodel.listOfMovieByGenre.observeAsState()
+    val searchText by viewmodel.searchText.observeAsState("")
+
     Scaffold (
         modifier = Modifier.background(Color.Transparent),
         topBar = {
             TopBar(genreName)
         },
-        content = {
-            paddingValues ->
-            LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-                .background(Color.Transparent),
-                content = {
-                    items(genres.value!!.size){index->
-                        MovieItem(movie = genres.value!![index] ,  padding = paddingValues )
-                    }
-                }
-            )
+        content = { paddingValues ->
+            Column(modifier = Modifier.padding(paddingValues)) {
+                OutlinedTextField(
+                    value = searchText,
+                    onValueChange = { viewmodel.setSearchText(it) },
+                    placeholder = { Text(text = "Search By Title or Rating") },
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = { Icon(
+                        imageVector =Icons.Default.Search,
+                        contentDescription = "Search",
+                        modifier= Modifier.size(18.dp) ) }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
 
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier.fillMaxSize(),
+                    content = {
+                        val filteredGenres = genres?.filter {movie ->
+                            movie.title.contains(searchText, ignoreCase = true) ||
+                            movie.voteAverage.toString().contains(searchText, ignoreCase = true)
+                        } ?: emptyList()
+                        items(filteredGenres.size) { index ->
+                            MovieItem(movie = filteredGenres[index], padding = paddingValues)
+                        }
+                    }
+                )
+            }
         },
         containerColor = Color.Transparent
     )
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

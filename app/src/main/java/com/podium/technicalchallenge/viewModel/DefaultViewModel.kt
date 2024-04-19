@@ -31,6 +31,11 @@ class HomeViewmodel @Inject constructor(
     private val _listOfMovieByGenre : MutableLiveData<List<LocalMovie>> = MutableLiveData(emptyList())
     val listOfMovieByGenre: LiveData<List<LocalMovie>> get() = _listOfMovieByGenre
 
+    private val _searchText = MutableLiveData<String>()
+    val searchText: LiveData<String> = _searchText
+
+
+
     init {
         viewModelScope.launch {
 
@@ -51,6 +56,9 @@ class HomeViewmodel @Inject constructor(
         viewModelScope.launch {
             _listOfMovieByGenre.postValue(repo.getMoviesByGenre(genre))
         }
+    }
+    fun setSearchText(text: String) {
+        _searchText.value = text
     }
 
 
