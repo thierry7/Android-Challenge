@@ -1,5 +1,11 @@
 package com.podium.technicalchallenge.entity
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.serialization.Serializable
 @Serializable
 data class MovieResponse(
@@ -13,20 +19,13 @@ data class MovieData(
 @Serializable
 data class Movie(
     val id: Int,
-    val originalLanguage: String,
-    val originalTitle: String,
     val overview: String,
-    val popularity: Double,
     val posterPath: String,
     val releaseDate: String,
     val voteAverage: Double,
-    val voteCount: Int,
     val title: String,
-    val budget: Int,
     val runtime: Int,
     val genres: List<String>,
-    val cast: List<Cast>,
-    val director: Director
 )
 @Serializable
 data class Cast(
@@ -48,3 +47,18 @@ data class GenresResponse(
 data class GenresData(
     val genres: List<String>
 )
+@Entity(
+    tableName = "movie"
+)
+data class LocalMovie(
+   @PrimaryKey val id: Int,
+    val overview: String,
+    val posterPath: String,
+    val releaseDate: String,
+    val voteAverage: Double,
+    val title: String,
+    val runtime: Int,
+    val genres: List<String>,
+)
+
+

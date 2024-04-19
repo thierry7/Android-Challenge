@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,10 +15,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -35,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -46,6 +53,7 @@ import com.podium.technicalchallenge.viewModel.HomeViewmodel
 import com.podium.technicalchallenge.R
 import com.podium.technicalchallenge.entity.Movie
 import com.podium.technicalchallenge.ui.CustomizedTheme
+import com.podium.technicalchallenge.ui.myScreens.GenreDisplayScreen
 
 
 @Composable
@@ -55,61 +63,92 @@ fun HomeScreen(
     viewmodel: HomeViewmodel = hiltViewModel(),
 ) {
 
-    val uiState by viewmodel.getAllMovies().observeAsState()
-    if(!uiState.isNullOrEmpty())
+    val topMovies = viewmodel.bestMoviesLiveData .observeAsState()
+    if(!topMovies.value.isNullOrEmpty())
     {
         CustomizedTheme{
-            Column(Modifier.fillMaxSize()){
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.Transparent)
+            ){
                 Box(modifier = Modifier
                     .fillMaxWidth()
                     .height(1.dp)
+                    .background(Color.Transparent)
                     .weight(0.5f)) {
-                    Column(Modifier
-                        .fillMaxWidth()
-                        .background(brush = Brush.horizontalGradient(
-                            listOf(
-                                Color.Gray,
-                                Color.Transparent)))
+                    Column(
+                        Modifier
+                            .fillMaxWidth()
+                            .background(
+                                brush = Brush.horizontalGradient(
+                                    listOf(
+                                        Color.Gray,
+                                        Color.Transparent
+                                    )
+                                )
+                            )
                     ){
                         Text(text = "Movies: Top 5", modifier = Modifier
-                            .padding(8.dp), fontWeight = FontWeight.Bold, fontSize = 38.sp)
+                            .padding(8.dp), fontWeight = FontWeight.Bold, fontSize = 25.sp)
                         Spacer(modifier = Modifier.height(8.dp))
-
-                        Box(modifier = Modifier
-                            .fillMaxWidth()){
-                            Scaffold(
-                                content = { padding ->
-                                    val topMovies = viewmodel.getFiveBestMovies().observeAsState()
-                                    LazyRow {
-                                        topMovies.value?.size?.let {
-                                            items(it){ index ->
-                                                MovieItem(movie = topMovies.value!![index],
-                                                    onMovieClicked, 10, 210, padding)
-                                            }
+                        Scaffold(
+                            content = { padding ->
+                                LazyRow {
+                                    topMovies.value?.size?.let {
+                                        items(it){ index ->
+                                            MovieItem(movie = topMovies.value!![index],
+                                                onMovieClicked, 10, 225, padding)
                                         }
                                     }
                                 }
-                            )
-                        }
+                            }
+                        )
                     }
-
                 }
                 Spacer(modifier = Modifier.height(5.dp))
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color.Red)
-                        .height(1.dp)
-                        .weight(0.1f)
+                        .background(Color.Transparent)
+                        .fillMaxHeight()
+                        .weight(0.15f)
                 ) {
-                    Text(text = "Browse By Genre", modifier = Modifier.padding(8.dp),
-                        fontWeight = FontWeight.Bold)
+                    Column {
 
-                //GenreDisplayScreen( viewmodel = viewmodel, onGenreClicked = onGenreClicked)
+                        val genres = viewmodel.genreList.observeAsState()
+
+                        Text(text = "Browse By Genre", modifier = Modifier
+                            .padding(8.dp), fontWeight = FontWeight.Bold, fontSize = 25.sp,)
+                        Spacer(modifier = Modifier
+                            .height(8.dp)
+                            .background(Color.Green))
+                        Scaffold (
+                            content = {padding ->
+                                LazyRow {
+                                    genres.value?.size?.let {
+                                        items(it){ index ->
+                                            GenreItem( genre = genres.value!![index],
+                                                onGenreClicked = onGenreClicked, padding)
+                                        }
+                                    }
+
+                                }
+
+
+                            }
+
+                        )
+
+                    }
                 }
                 Spacer(modifier = Modifier.height(5.dp))
-                Box(modifier = Modifier.fillMaxWidth().height(1.dp).weight(0.4f)
-                    .background( brush = Brush.horizontalGradient(
+                Box(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .weight(0.35f)
+                    .background(
+                        brush = Brush.horizontalGradient(
                             listOf(
                                 Color.Gray,
                                 Color.Transparent
@@ -117,26 +156,24 @@ fun HomeScreen(
                         )
                     )
                 ) {
+                    val movies = viewmodel.movieList.observeAsState()
                     Column {
                         Text(text = "Browse By ALL", modifier = Modifier
-                            .padding(8.dp), fontWeight = FontWeight.Bold, fontSize = 38.sp,)
+                            .padding(8.dp), fontWeight = FontWeight.Bold, fontSize = 25.sp,)
                         Spacer(modifier = Modifier.height(8.dp))
-                        Box(modifier = Modifier.fillMaxWidth()){
                             Scaffold(
                                 content = { padding ->
-                                    val topMovies = viewmodel.getAllMovies().observeAsState()
                                     LazyRow {
-                                        topMovies?.value?.size?.let {
+                                        movies.value?.size?.let {
                                             items(it){ index ->
 
-                                                MovieItem(movie = topMovies.value!![index],
-                                                    onMovieClicked, 6, 158, padding)
+                                                MovieItem(movie = movies.value!![index],
+                                                    onMovieClicked, 6, 150, padding)
                                             }
                                         }
                                     }
                                 }
                             )
-                        }
                     }
                 }
             }
@@ -144,8 +181,8 @@ fun HomeScreen(
 
     }else{
         Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp), contentAlignment = Alignment.Center) {
+            .fillMaxSize()
+            .padding(8.dp), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
     }
@@ -160,6 +197,17 @@ fun MovieItem(movie: Movie,
               width: Int,
               paddingValue: PaddingValues
 ) {
+    val myGradient = Brush.linearGradient(
+        colors = listOf(
+            Color(0xffb226e1),
+            Color(0xfffc6601),
+            Color(0xff5995ee),
+            Color(0xff303535)
+        ),
+        start = Offset(Float.POSITIVE_INFINITY, 0f),
+        end = Offset(0f, Float.POSITIVE_INFINITY)
+
+    )
 
     Card(
         modifier = Modifier
@@ -174,9 +222,7 @@ fun MovieItem(movie: Movie,
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Red),
-
-
+                .background(myGradient),
             contentAlignment = Alignment.BottomCenter
         ) {
             AsyncImage(
@@ -213,7 +259,7 @@ fun MovieItem(movie: Movie,
                     )
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Row(Modifier.align(Alignment.Start)) {
+                Row(Modifier.align(Alignment.End)) {
                     Icon(imageVector = Icons.Rounded.Star, contentDescription = null)
                     Text(
                         text = movie.voteAverage.toString(),
@@ -229,4 +275,46 @@ fun MovieItem(movie: Movie,
             }
         }
     }
+}
+@Composable
+fun GenreItem(genre: String, onGenreClicked: (String) -> Unit, padding : PaddingValues) {
+
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.Transparent), contentAlignment = Alignment.Center ){
+        Button(
+            modifier = Modifier
+                .height(50.dp).padding(8.dp)
+                .background(brush = Brush.horizontalGradient(
+                    listOf(
+                        Color.Gray,
+                        Color.Transparent
+                    )
+                ))
+                .width(120.dp),
+            shape = RoundedCornerShape(topStart = 10.dp, bottomEnd = 10.dp),
+            enabled = true,
+            elevation = ButtonDefaults.buttonElevation(
+                defaultElevation = 30.dp
+            ),
+            onClick = { onGenreClicked(genre) },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF7B8AE7),
+            ),
+
+        ){
+            Text(text = genre, color= Color.Black, style = TextStyle(
+                shadow = Shadow(
+                    color = Color(0xfffc6603),
+                    offset = Offset(1f, 1f),
+                    blurRadius = 3f
+                ),
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+
+            ))
+        }
+    }
+
+
 }

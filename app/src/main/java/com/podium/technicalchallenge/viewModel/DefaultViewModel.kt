@@ -1,11 +1,13 @@
 package com.podium.technicalchallenge.viewModel
 
 import android.annotation.SuppressLint
+import android.media.tv.TvContract.Programs.Genres
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
+import com.podium.technicalchallenge.entity.LocalMovie
 import com.podium.technicalchallenge.network.MovieRepo
 import com.podium.technicalchallenge.entity.Movie
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,46 +20,42 @@ class HomeViewmodel @Inject constructor(
 ): ViewModel() {
 
     private val _movieList: MutableLiveData<List<Movie>> = MutableLiveData(emptyList())
-    private val movieList: LiveData<List<Movie>> get() = _movieList
+    val movieList: LiveData<List<Movie>> get() = _movieList
     private val _bestMoviesLiveData: MutableLiveData<List<Movie>> = MutableLiveData(emptyList())
-    private val bestMoviesLiveData: LiveData<List<Movie>> get() = _bestMoviesLiveData
+    val bestMoviesLiveData: LiveData<List<Movie>> get() = _bestMoviesLiveData
 
+    private val _genreList: MutableLiveData<List<String>> = MutableLiveData(emptyList())
+    val genreList: LiveData<List<String>> get() = _genreList
 
+    private val _movie : MutableLiveData<LocalMovie> = MutableLiveData()
+    val movie: LiveData<LocalMovie> get() = _movie
 
+    private val _listOfMovieByGenre : MutableLiveData<List<LocalMovie>> = MutableLiveData(emptyList())
+    val listOfMovieByGenre: LiveData<List<LocalMovie>> get() = _listOfMovieByGenre
 
     init {
         viewModelScope.launch {
-            val response = repo.getMovieList()
-            if (response.isSuccessful) {
-                val movies = response.body()?.data?.movies
-                _bestMoviesLiveData.value = movies?.sortedByDescending { it.voteAverage }?.take(5) ?: emptyList()
-                _movieList.value = movies ?: emptyList()
-            } else {
-                println("Error: ${response.message()}")
-            }
+
+            _bestMoviesLiveData.postValue(repo.getBestFiveMoviesByRating())
+            _movieList.postValue(repo.getAllMovies())
+            _genreList.postValue(repo.getGenres())
+        }
+    }
+    fun getClickedMovie(id: Int) {
+
+        viewModelScope.launch {
+            _movie.postValue(repo.getMovieById(id))
+
         }
     }
 
-    fun getFiveBestMovies(): LiveData<List<Movie>> {
-        return bestMoviesLiveData
-    }
-
-    fun getAllMovies(): LiveData<List<Movie>> {
-        return movieList
-    }
-
-    fun getClickedMovie(id: Int): LiveData<Movie?> {
-        return movieList.map {
-            it.find{
-                it.id == id.toInt()
-            }
+    fun getListMovieByGenre(genre: String){
+        viewModelScope.launch {
+            _listOfMovieByGenre.postValue(repo.getMoviesByGenre(genre))
         }
     }
+
+
 }
 
 
-
-data class ScreenState(
-    val movies: List<Movie>? = emptyList(),
-    val loading: Boolean? = false
-)

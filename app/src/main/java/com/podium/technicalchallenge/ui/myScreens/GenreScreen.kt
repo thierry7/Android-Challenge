@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,6 +29,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.podium.technicalchallenge.R
+import com.podium.technicalchallenge.entity.LocalMovie
 import com.podium.technicalchallenge.entity.Movie
 import com.podium.technicalchallenge.viewModel.HomeViewmodel
 
@@ -51,7 +55,8 @@ fun GenreScreen(
     genreName : String,
     viewmodel: HomeViewmodel = hiltViewModel()
 ) {
-
+    viewmodel.getListMovieByGenre(genreName)
+    val genres = viewmodel.listOfMovieByGenre.observeAsState()
     Scaffold (
         modifier = Modifier.background(Color.Transparent),
         topBar = {
@@ -59,23 +64,19 @@ fun GenreScreen(
         },
         content = {
             paddingValues ->
-            LazyVerticalGrid(columns = GridCells.Fixed(2),
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-                    .background(Color.Transparent),
+            LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .background(Color.Transparent),
                 content = {
-
-
+                    items(genres.value!!.size){index->
+                        MovieItem(movie = genres.value!![index] ,  padding = paddingValues )
+                    }
                 }
             )
 
-        }
-    )
-
-
-    Text(
-        text= genreName
+        },
+        containerColor = Color.Transparent
     )
 }
 
@@ -88,15 +89,12 @@ fun TopBar(genreName: String) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MovieItem(movie: Movie, onMovieClicked: (Movie) -> Unit, padding: PaddingValues) {
+fun MovieItem(movie: LocalMovie, padding: PaddingValues) {
 
     Card(
         modifier = Modifier
             .wrapContentSize()
-            .padding(10.dp)
-            .clickable {
-                onMovieClicked(movie)
-            },
+            .padding(10.dp),
         elevation = CardDefaults.cardElevation(8.dp)
 
     ) {
@@ -104,8 +102,6 @@ fun MovieItem(movie: Movie, onMovieClicked: (Movie) -> Unit, padding: PaddingVal
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.Red),
-
-
             contentAlignment = Alignment.BottomCenter
         ) {
             AsyncImage(
@@ -119,7 +115,7 @@ fun MovieItem(movie: Movie, onMovieClicked: (Movie) -> Unit, padding: PaddingVal
             )
             Column(
                 modifier = Modifier
-                    .width(190.dp)
+                    .fillMaxHeight()
                     .background(Color.LightGray.copy(.7f))
                     .padding(6.dp),
 
@@ -129,7 +125,7 @@ fun MovieItem(movie: Movie, onMovieClicked: (Movie) -> Unit, padding: PaddingVal
                     modifier = Modifier
                         .fillMaxWidth()
                         .basicMarquee(),
-                    textAlign = TextAlign.Start,
+                    textAlign = TextAlign.Center,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     maxLines = 2,

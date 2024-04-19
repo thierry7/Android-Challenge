@@ -40,6 +40,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.podium.technicalchallenge.viewModel.HomeViewmodel
 import com.podium.technicalchallenge.R
+import com.podium.technicalchallenge.entity.LocalMovie
 import com.podium.technicalchallenge.entity.Movie
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -50,7 +51,9 @@ fun MovieDetailScreen(
 ) {
 
 
-    val movie by viewModel.getClickedMovie(movieId.toInt()).observeAsState()
+    viewModel.getClickedMovie(movieId.toInt())
+    val movie by viewModel.movie.observeAsState()
+
 
     if(movie != null){
 
@@ -60,8 +63,8 @@ fun MovieDetailScreen(
                 contentAlignment = Alignment.TopCenter
 
             ){
-                BackgroundPoster(movie = movie)
-                ForeGroundPoster(movie = movie)
+                BackgroundPoster(movie = movie!!)
+                ForeGroundPoster(movie = movie!!)
 
                 Column(
                     modifier = Modifier
@@ -106,7 +109,7 @@ fun MovieDetailScreen(
 }
 
 @Composable
-fun TextBuilderGenres(icon: ImageVector, title: String, bodyText: Movie) {
+fun TextBuilderGenres(icon: ImageVector, title: String, bodyText: LocalMovie) {
     Row{
 
         Icon(
@@ -134,7 +137,7 @@ fun TextBuilderGenres(icon: ImageVector, title: String, bodyText: Movie) {
 }
 
 @Composable
-fun TextBuilderSummary(icon: ImageVector, title: String, bodyText: Movie){
+fun TextBuilderSummary(icon: ImageVector, title: String, bodyText: LocalMovie){
     Row{
         Icon(
             imageVector = icon,
@@ -156,7 +159,7 @@ fun TextBuilderSummary(icon: ImageVector, title: String, bodyText: Movie){
 
 
 @Composable
-fun Rating(movie: Movie, modifier: Modifier.Companion) {
+fun Rating(movie: LocalMovie, modifier: Modifier.Companion) {
 
     Row(modifier= modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
 
@@ -181,7 +184,7 @@ fun Rating(movie: Movie, modifier: Modifier.Companion) {
 }
 
 @Composable
-fun BackgroundPoster(movie: Movie?){
+fun BackgroundPoster(movie: LocalMovie){
 
     Box(
         modifier = Modifier
@@ -213,7 +216,7 @@ fun BackgroundPoster(movie: Movie?){
 }
 
 @Composable
-fun ForeGroundPoster(movie: Movie?){
+fun ForeGroundPoster(movie: LocalMovie){
     Box(
         modifier = Modifier
             .wrapContentHeight()
