@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -34,6 +36,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,6 +51,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.podium.technicalchallenge.R
@@ -121,17 +126,17 @@ fun TopBar(genreName: String) {
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White.copy(.4f)
     ) )
 }
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MovieItem(movie: LocalMovie, padding: PaddingValues) {
+    val showDialog = remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
             .wrapContentSize()
             .padding(10.dp),
-        elevation = CardDefaults.cardElevation(8.dp)
-
+        elevation = CardDefaults.cardElevation(8.dp),
+        onClick = { showDialog.value = true }
     ) {
         Box(
             modifier = Modifier
@@ -153,8 +158,7 @@ fun MovieItem(movie: LocalMovie, padding: PaddingValues) {
                     .fillMaxHeight()
                     .background(Color.LightGray.copy(.7f))
                     .padding(6.dp),
-
-                ) {
+            ) {
                 Text(
                     text = movie.title,
                     modifier = Modifier
@@ -171,7 +175,6 @@ fun MovieItem(movie: LocalMovie, padding: PaddingValues) {
                             blurRadius = 3f
                         )
                     )
-
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(Modifier.align(Alignment.Start)) {
@@ -189,5 +192,29 @@ fun MovieItem(movie: LocalMovie, padding: PaddingValues) {
                 }
             }
         }
+    }
+
+    if (showDialog.value) {
+        Dialog(
+            onDismissRequest = { showDialog.value = false },
+            content = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AsyncImage(
+                        model = movie.posterPath,
+                        contentDescription = movie.title,
+                        error = painterResource(id = R.drawable.ic_home_black_24dp),
+                        modifier = Modifier
+                            .width(350.dp)
+                            .height(500.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                }
+            }
+        )
     }
 }
