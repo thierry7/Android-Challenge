@@ -28,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -43,6 +44,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.podium.technicalchallenge.R
@@ -84,7 +86,21 @@ fun GenreScreen(
 @Composable
 fun TopBar(genreName: String) {
 
-    TopAppBar(title = { Text(text = genreName) })
+    TopAppBar(title = {
+        Text(
+            text = genreName,
+            fontWeight = FontWeight.Bold,
+            fontSize = 25.sp,
+            style = TextStyle(
+                shadow = Shadow(
+                    color = Color(0xfffc6603),
+                    offset = Offset(1f, 1f),
+                    blurRadius = 3f
+                )
+            )
+        ) },
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White.copy(.4f)
+    ) )
 }
 
 @OptIn(ExperimentalFoundationApi::class)

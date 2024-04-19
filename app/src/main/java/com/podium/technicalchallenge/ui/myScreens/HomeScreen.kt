@@ -1,4 +1,3 @@
-//import com.podium.technicalchallenge.Home.GenreDisplayScreen
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -47,9 +46,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.podium.technicalchallenge.R
 import com.podium.technicalchallenge.entity.LocalMovie
-import com.podium.technicalchallenge.entity.Movie
 import com.podium.technicalchallenge.ui.CustomizedTheme
 import com.podium.technicalchallenge.viewModel.HomeViewmodel
+
 @Composable
 fun HomeScreen(
     onMovieClicked : (LocalMovie) -> Unit,
@@ -304,8 +303,8 @@ fun GenreItem(genre: String, onGenreClicked: (String) -> Unit, padding : Padding
                     blurRadius = 3f
                 ),
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-
+                textAlign = TextAlign.Center,
+                fontSize = 15.sp
             ))
         }
     }
