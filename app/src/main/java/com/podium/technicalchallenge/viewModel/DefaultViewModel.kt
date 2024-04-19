@@ -1,28 +1,26 @@
 package com.podium.technicalchallenge.viewModel
 
 import android.annotation.SuppressLint
-import android.media.tv.TvContract.Programs.Genres
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.podium.technicalchallenge.entity.LocalMovie
 import com.podium.technicalchallenge.network.MovieRepo
-import com.podium.technicalchallenge.entity.Movie
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @SuppressLint("SuspiciousIndentation")
 @HiltViewModel
 class HomeViewmodel @Inject constructor(
     private val repo: MovieRepo
 ): ViewModel() {
 
-    private val _movieList: MutableLiveData<List<Movie>> = MutableLiveData(emptyList())
-    val movieList: LiveData<List<Movie>> get() = _movieList
-    private val _bestMoviesLiveData: MutableLiveData<List<Movie>> = MutableLiveData(emptyList())
-    val bestMoviesLiveData: LiveData<List<Movie>> get() = _bestMoviesLiveData
+    private val _movieList: MutableLiveData<List<LocalMovie>> = MutableLiveData(emptyList())
+    val movieList: LiveData<List<LocalMovie>> get() = _movieList
+    private val _bestMoviesLiveData: MutableLiveData<List<LocalMovie>> = MutableLiveData(emptyList())
+    val bestMoviesLiveData: LiveData<List<LocalMovie>> get() = _bestMoviesLiveData
 
     private val _genreList: MutableLiveData<List<String>> = MutableLiveData(emptyList())
     val genreList: LiveData<List<String>> get() = _genreList

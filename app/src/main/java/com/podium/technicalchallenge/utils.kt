@@ -57,36 +57,7 @@ fun Movie.toLocal() = LocalMovie(
     runtime= runtime,
     genres = genres
 )
-fun LocalMovie.toNetwork() = Movie(
-    id = id,
-    overview = overview,
-    posterPath = posterPath ,
-    releaseDate = releaseDate ,
-    voteAverage = voteAverage,
-    title = title,
-    runtime= runtime,
-    genres = genres
-)
-@JvmName("localToExternal")
-fun List<LocalMovie>.toNetworkMovies(): List<Movie> {
-    return map { it.toNetwork() }
-}
 
 @JvmName("ExternalToLocal")
 fun List<Movie>.toLocal() = map(Movie::toLocal)
 
-fun LiveData<LocalMovie?>.toLiveMovie(): LiveData<Movie> {
-    return object : LiveData<Movie>() {
-        private var initialized = false
-
-        override fun onActive() {
-            super.onActive()
-            if (!initialized) {
-                initialized = true
-                observeForever { localMovie ->
-                    value = localMovie // Convert LocalMovie to Movie
-                }
-            }
-        }
-    }
-}

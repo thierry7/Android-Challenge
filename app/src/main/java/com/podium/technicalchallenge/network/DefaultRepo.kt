@@ -1,18 +1,12 @@
 package com.podium.technicalchallenge.network
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.map
 import com.podium.technicalchallenge.entity.LocalMovie
 import com.podium.technicalchallenge.entity.Movie
 import com.podium.technicalchallenge.entity.MovieResponse
 import com.podium.technicalchallenge.local.MovieDao
 import com.podium.technicalchallenge.network.queries.Queries
 import com.podium.technicalchallenge.network.retrofit.GraphQLService
-import com.podium.technicalchallenge.toLiveMovie
 import com.podium.technicalchallenge.toLocal
-import com.podium.technicalchallenge.toNetwork
-import com.podium.technicalchallenge.toNetworkMovies
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -48,9 +42,9 @@ class DefaultRepo @Inject constructor(
             .queryListMovies(requestBody)
     }
 
-    override suspend fun getAllMovies(): List<Movie> {
+    override suspend fun getAllMovies(): List<LocalMovie> {
        return withContext(Dispatchers.IO){
-           movieDao.getAllMovies().toNetworkMovies()
+           movieDao.getAllMovies()
        }
     }
 
@@ -70,9 +64,9 @@ class DefaultRepo @Inject constructor(
         }
     }
 
-    override suspend fun getBestFiveMoviesByRating(): List<Movie> {
+    override suspend fun getBestFiveMoviesByRating(): List<LocalMovie> {
         return withContext(Dispatchers.IO){
-            movieDao.getBestFiveMoviesByRating().toNetworkMovies()
+            movieDao.getBestFiveMoviesByRating()
         }
     }
 

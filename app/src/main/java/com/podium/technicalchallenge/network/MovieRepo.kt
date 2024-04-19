@@ -9,10 +9,10 @@ import retrofit2.Response
 interface MovieRepo {
     suspend fun getMovieList(): Response<MovieResponse>
 
-    suspend fun getAllMovies(): List<Movie>
+    suspend fun getAllMovies(): List<LocalMovie>
     suspend fun getMovieById(id: Int): LocalMovie
     suspend fun getGenres(): List<String>
-    suspend fun getBestFiveMoviesByRating(): List<Movie>
+    suspend fun getBestFiveMoviesByRating(): List<LocalMovie>
     suspend fun getMoviesByGenre(genre: String): List<LocalMovie>
     suspend fun insertMovies(movies: List<Movie>)
 
