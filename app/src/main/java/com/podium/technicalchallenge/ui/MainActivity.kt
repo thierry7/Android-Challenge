@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
                     end = Offset(0f, Float.POSITIVE_INFINITY)
 
                 )
+                supportActionBar?.hide()
                 Box(Modifier.fillMaxSize().background(myGradient)){
                     MovieNavGraph()
 

@@ -98,7 +98,7 @@ fun HomeScreen(
                                     topMovies.value?.size?.let {
                                         items(it){ index ->
                                             MovieItem(movie = topMovies.value!![index],
-                                                onMovieClicked, 10, 225, padding)
+                                                onMovieClicked, 10, 240, padding)
                                         }
                                     }
                                 }
@@ -168,7 +168,7 @@ fun HomeScreen(
                                             items(it){ index ->
 
                                                 MovieItem(movie = movies.value!![index],
-                                                    onMovieClicked, 6, 150, padding)
+                                                    onMovieClicked, 6, 155, padding)
                                             }
                                         }
                                     }
@@ -284,7 +284,7 @@ fun GenreItem(genre: String, onGenreClicked: (String) -> Unit, padding : Padding
         .background(Color.Transparent), contentAlignment = Alignment.Center ){
         Button(
             modifier = Modifier
-                .height(50.dp).padding(8.dp)
+                .fillMaxHeight().padding(8.dp)
                 .background(brush = Brush.horizontalGradient(
                     listOf(
                         Color.Gray,
