@@ -1,9 +1,7 @@
 package com.podium.technicalchallenge
 
-import androidx.lifecycle.LiveData
 import androidx.room.TypeConverter
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.podium.technicalchallenge.entity.Cast
 import com.podium.technicalchallenge.entity.Director
 import com.podium.technicalchallenge.entity.LocalMovie
