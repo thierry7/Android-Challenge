@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 
 interface MovieRepo {
-    suspend fun getMovieList(): Response<MovieResponse>
+    suspend fun loadMovies()
 
     suspend fun getAllMovies(): List<LocalMovie>
     suspend fun getMovieById(id: Int): LocalMovie

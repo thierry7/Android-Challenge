@@ -38,7 +38,7 @@ class HomeViewmodel @Inject constructor(
 
     init {
         viewModelScope.launch {
-
+            repo.loadMovies()
             _bestMoviesLiveData.postValue(repo.getBestFiveMoviesByRating())
             _movieList.postValue(repo.getAllMovies())
             _genreList.postValue(repo.getGenres())

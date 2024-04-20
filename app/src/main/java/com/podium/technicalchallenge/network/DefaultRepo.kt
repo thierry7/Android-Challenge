@@ -1,5 +1,6 @@
 package com.podium.technicalchallenge.network
 
+import android.util.Log
 import com.podium.technicalchallenge.entity.LocalMovie
 import com.podium.technicalchallenge.entity.Movie
 import com.podium.technicalchallenge.entity.MovieResponse
@@ -8,6 +9,7 @@ import com.podium.technicalchallenge.network.queries.Queries
 import com.podium.technicalchallenge.network.retrofit.GraphQLService
 import com.podium.technicalchallenge.toLocal
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -21,25 +23,28 @@ class DefaultRepo @Inject constructor(
     private val movieDao: MovieDao
 ): MovieRepo {
 
-   var movieList : List<Movie> = emptyList()
-    init{
-        runBlocking {
-            movieList = getMovieList().body()?.data?.movies!!
-            insertMovies(movieList)
-        }
 
-    }
 
-    override suspend fun getMovieList(): Response<MovieResponse> {
-        val requestBody =
-            "{\"query\":\"${Queries.getMoviesQuery()}\"}"
-                .toRequestBody(
-                    "application/json"
-                        .toMediaTypeOrNull()
-                )
-        return retrofit
-            .create(GraphQLService::class.java)
-            .queryListMovies(requestBody)
+    override suspend fun loadMovies() {
+
+            var movieList : List<Movie> = emptyList()
+
+            val requestBody =
+                "{\"query\":\"${Queries.getMoviesQuery()}\"}".toRequestBody("application/json"
+                    .toMediaTypeOrNull())
+            val response = retrofit
+                .create(GraphQLService::class.java)
+                .queryListMovies(requestBody)
+            if(response.isSuccessful){
+                if(response.body() != null){
+                    movieList = response.body()!!.data.movies
+                    insertMovies(movieList)
+                }else{
+                    Log.e("API_CALL", "Unsuccessful response: ${response.code()}")
+                }
+            }else{
+                Log.e("API_CALL", "Error fetching data ${response.errorBody()}")
+            }
     }
 
     override suspend fun getAllMovies(): List<LocalMovie> {
@@ -78,7 +83,9 @@ class DefaultRepo @Inject constructor(
 
 
     override suspend fun insertMovies(movies: List<Movie>) {
-         movieDao.upSertAll(movies.toLocal())
+        withContext(Dispatchers.IO){
+            movieDao.upSertAll(movies.toLocal())
+        }
 
     }
 
