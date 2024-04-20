@@ -26,6 +26,7 @@ data class Movie(
     val title: String,
     val runtime: Int,
     val genres: List<String>,
+    val director: Director
 )
 @Serializable
 data class Cast(
@@ -59,6 +60,7 @@ data class LocalMovie(
     val title: String,
     val runtime: Int,
     val genres: List<String>,
+    val director: Director
 )
 
 

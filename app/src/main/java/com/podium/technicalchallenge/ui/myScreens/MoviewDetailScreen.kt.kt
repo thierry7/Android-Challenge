@@ -3,6 +3,7 @@ package com.podium.technicalchallenge.ui.myScreens
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +15,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Face
@@ -24,6 +30,9 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -32,16 +41,16 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.podium.technicalchallenge.viewModel.HomeViewmodel
 import com.podium.technicalchallenge.R
 import com.podium.technicalchallenge.entity.LocalMovie
-import com.podium.technicalchallenge.entity.Movie
+import com.podium.technicalchallenge.viewModel.HomeViewmodel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -76,7 +85,10 @@ fun MovieDetailScreen(
 
                     Text(
                         text = movie!!.title,
-                        modifier = Modifier.fillMaxWidth().basicMarquee(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.Start)
+                            .basicMarquee(),
                         maxLines = 1,
                         fontSize = 38.sp,
                         color = Color.White,
@@ -87,6 +99,8 @@ fun MovieDetailScreen(
                     Rating(movie = movie!!, modifier = Modifier)
                     TextBuilderSummary(icon = Icons.Filled.Info, title ="Summary", bodyText = movie!!)
                     TextBuilderGenres(icon = Icons.Filled.Person, title ="Genre", bodyText = movie!!)
+                    TextBuilderDirector(icon = Icons.Filled.Person, title ="Director", bodyText = movie!!)
+
 
 
                 }
@@ -109,14 +123,31 @@ fun MovieDetailScreen(
 }
 
 @Composable
-fun TextBuilderGenres(icon: ImageVector, title: String, bodyText: LocalMovie) {
-    Row{
+fun TextBuilderDirector(icon: ImageVector, title: String, bodyText: LocalMovie) {
+    Row{ Icon(
+        imageVector = icon,
+        contentDescription = "person",
+        tint = Color.White
+    )
+        Text(
+            text = title,
+            modifier = Modifier
+                .padding(start = 10.dp),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White
+        )
+    }
 
-        Icon(
+    Text(text = bodyText.director.name, color = Color.White)
+}
+
+@Composable
+fun TextBuilderGenres(icon: ImageVector, title: String, bodyText: LocalMovie) {
+    Row{ Icon(
             imageVector = icon,
             contentDescription = "person",
             tint = Color.White
-
         )
         Text(
             text = title,
@@ -125,19 +156,17 @@ fun TextBuilderGenres(icon: ImageVector, title: String, bodyText: LocalMovie) {
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White
-
         )
-
     }
 
     Text(text = bodyText.genres.toString(), color = Color.White)
-
-
-
 }
 
 @Composable
 fun TextBuilderSummary(icon: ImageVector, title: String, bodyText: LocalMovie){
+
+    var textFieldValue by remember { mutableStateOf(bodyText.overview) }
+
     Row{
         Icon(
             imageVector = icon,
@@ -152,6 +181,7 @@ fun TextBuilderSummary(icon: ImageVector, title: String, bodyText: LocalMovie){
             fontWeight = FontWeight.Bold,
             color = Color.White,
         )
+
     }
 
     Text(text = bodyText.overview, color = Color.White, maxLines = 3)
@@ -249,3 +279,46 @@ fun ForeGroundPoster(movie: LocalMovie){
         )
     }
 }
+
+//@Composable
+//fun ExpandableTextField(
+//    initialText: String,
+//    maxLength: Int = 100,
+//    modifier: Modifier = Modifier,
+//    onTextChanged: (String) -> Unit
+//) {
+//    var expanded by remember { mutableStateOf(false) }
+//    var text by remember { mutableStateOf(initialText) }
+//
+//    Column(modifier = modifier) {
+//        TextField(
+//            value = text,
+//            onValueChange = {
+//                if (it.length <= maxLength) {
+//                    text = it
+//                    onTextChanged(it)
+//                }
+//            },
+//            modifier = Modifier.fillMaxWidth().background(Color.Transparent),
+//            maxLines = if (expanded) Int.MAX_VALUE else 2,
+//            readOnly = !expanded,
+//            textStyle = TextStyle(fontSize = 16.sp, color = Color.White),
+//        )
+//        if (text.length > maxLength) {
+//            if(expanded){
+//                Text(
+//                    text = "...see_less",
+//                    color = Color.White,
+//                    modifier = Modifier.align(Alignment.End).clickable { expanded = false }
+//                )
+//            }else{
+//                Text(
+//                    text = "...see_more",
+//                    color = Color.White,
+//                    modifier = Modifier.align(Alignment.End).clickable { expanded = true }
+//                )
+//            }
+//
+//        }
+//    }
+//}

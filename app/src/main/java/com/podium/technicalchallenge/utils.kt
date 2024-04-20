@@ -9,8 +9,30 @@ import com.podium.technicalchallenge.entity.Director
 import com.podium.technicalchallenge.entity.LocalMovie
 import com.podium.technicalchallenge.entity.Movie
 
+class Converters {
+    @TypeConverter
+    fun fromCastToString(cast: Cast): String {
+        // Convert Cast object to JSON string
+        return Gson().toJson(cast)
+    }
 
-class GenresConverter {
+    @TypeConverter
+    fun fromStringToCast(json: String): Cast {
+        // Convert JSON string to Cast object
+        return Gson().fromJson(json, Cast::class.java)
+    }
+
+    @TypeConverter
+    fun fromDirectorToString(director: Director): String {
+        // Convert Director object to JSON string
+        return Gson().toJson(director)
+    }
+
+    @TypeConverter
+    fun fromStringToDirector(json: String): Director {
+        // Convert JSON string to Director object
+        return Gson().fromJson(json, Director::class.java)
+    }
     @TypeConverter
     fun fromString(value: String): List<String> {
         return value.split(",")
@@ -22,29 +44,6 @@ class GenresConverter {
     }
 }
 
-class CastListConverter {
-    @TypeConverter
-    fun fromString(value: String): List<Cast> {
-        val listType = object : TypeToken<List<Cast>>() {}.type
-        return Gson().fromJson(value, listType)
-    }
-
-    @TypeConverter
-    fun fromList(list: List<Cast>): String {
-        return Gson().toJson(list)
-    }
-}
-class DirectorConverter {
-    @TypeConverter
-    fun fromJson(json: String): Director {
-        return Gson().fromJson(json, Director::class.java)
-    }
-
-    @TypeConverter
-    fun toJson(director: Director): String {
-        return Gson().toJson(director)
-    }
-}
 
 fun Movie.toLocal() = LocalMovie(
 
@@ -55,7 +54,8 @@ fun Movie.toLocal() = LocalMovie(
     voteAverage = voteAverage,
     title = title,
     runtime= runtime,
-    genres = genres
+    genres = genres,
+    director = director
 )
 
 @JvmName("ExternalToLocal")
