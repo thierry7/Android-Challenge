@@ -55,7 +55,7 @@ fun HomeScreen(
     onGenreClicked: (String)-> Unit,
     viewmodel: HomeViewmodel = hiltViewModel(),
 ) {
-
+    viewmodel.getBestFiveMoviesByRating()
     val topMovies = viewmodel.bestMoviesLiveData .observeAsState()
     if(!topMovies.value.isNullOrEmpty())
     {
@@ -108,7 +108,7 @@ fun HomeScreen(
                         .weight(0.15f)
                 ) {
                     Column {
-
+                        viewmodel.getGenres()
                         val genres = viewmodel.genreList.observeAsState()
 
                         Text(text = "Browse By Genre", modifier = Modifier

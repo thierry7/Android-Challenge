@@ -18,9 +18,6 @@ class DefaultRepo @Inject constructor(
     private val retrofit: Retrofit,
     private val movieDao: MovieDao
 ): MovieRepo {
-
-
-
     override suspend fun loadMovies() {
 
         val requestBody = "{\"query\":\"${Queries.getMoviesQuery()}\"}"

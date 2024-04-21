@@ -37,11 +37,25 @@ class HomeViewmodel @Inject constructor(
 
 
     init {
+        getAllMovies()
         viewModelScope.launch {
             repo.loadMovies()
-            _bestMoviesLiveData.postValue(repo.getBestFiveMoviesByRating())
-            _movieList.postValue(repo.getAllMovies())
+
+        }
+    }
+    fun getGenres(){
+        viewModelScope.launch {
             _genreList.postValue(repo.getGenres())
+        }
+    }
+    private fun getAllMovies(){
+        viewModelScope.launch {
+            _movieList.postValue(repo.getAllMovies())
+        }
+    }
+    fun getBestFiveMoviesByRating(){
+        viewModelScope.launch {
+            _bestMoviesLiveData.postValue(repo.getBestFiveMoviesByRating())
         }
     }
     fun getClickedMovie(id: Int) {
@@ -51,7 +65,6 @@ class HomeViewmodel @Inject constructor(
 
         }
     }
-
     fun getListMovieByGenre(genre: String){
         viewModelScope.launch {
             _listOfMovieByGenre.postValue(repo.getMoviesByGenre(genre))

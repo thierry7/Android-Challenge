@@ -59,11 +59,8 @@ fun MovieDetailScreen(
     viewModel: HomeViewmodel = hiltViewModel()
 ) {
 
-
     viewModel.getClickedMovie(movieId.toInt())
     val movie by viewModel.movie.observeAsState()
-
-
     if(movie != null){
 
         Scaffold { padding ->
@@ -72,8 +69,8 @@ fun MovieDetailScreen(
                 contentAlignment = Alignment.TopCenter
 
             ){
-                BackgroundPoster(movie = movie!!)
-                ForeGroundPoster(movie = movie!!)
+                BackgroundPoster(movie = movie)
+                ForeGroundPoster(movie = movie)
 
                 Column(
                     modifier = Modifier
@@ -214,7 +211,7 @@ fun Rating(movie: LocalMovie, modifier: Modifier.Companion) {
 }
 
 @Composable
-fun BackgroundPoster(movie: LocalMovie){
+fun BackgroundPoster(movie: LocalMovie?){
 
     Box(
         modifier = Modifier
@@ -246,7 +243,7 @@ fun BackgroundPoster(movie: LocalMovie){
 }
 
 @Composable
-fun ForeGroundPoster(movie: LocalMovie){
+fun ForeGroundPoster(movie: LocalMovie?){
     Box(
         modifier = Modifier
             .wrapContentHeight()
