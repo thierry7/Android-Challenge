@@ -14,7 +14,6 @@ data class MovieResponse(
 @Serializable
 data class MovieData(
     val movies: List<Movie>,
-    val movie: Movie
 )
 @Serializable
 data class Movie(

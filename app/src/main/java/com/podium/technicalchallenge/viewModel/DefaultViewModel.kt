@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @SuppressLint("SuspiciousIndentation")
 @HiltViewModel
-class HomeViewmodel @Inject constructor(
+class DefaultViewmodel @Inject constructor(
     private val repo: MovieRepo
 ): ViewModel() {
 

@@ -3,7 +3,6 @@ package com.podium.technicalchallenge.ui.myScreens
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,12 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Face
@@ -41,7 +37,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -50,13 +45,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.podium.technicalchallenge.R
 import com.podium.technicalchallenge.entity.LocalMovie
-import com.podium.technicalchallenge.viewModel.HomeViewmodel
+import com.podium.technicalchallenge.viewModel.DefaultViewmodel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MovieDetailScreen(
     movieId: Long,
-    viewModel: HomeViewmodel = hiltViewModel()
+    viewModel: DefaultViewmodel = hiltViewModel()
 ) {
 
     viewModel.getClickedMovie(movieId.toInt())

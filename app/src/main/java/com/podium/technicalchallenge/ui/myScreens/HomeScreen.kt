@@ -47,13 +47,13 @@ import coil.compose.AsyncImage
 import com.podium.technicalchallenge.R
 import com.podium.technicalchallenge.entity.LocalMovie
 import com.podium.technicalchallenge.ui.CustomizedTheme
-import com.podium.technicalchallenge.viewModel.HomeViewmodel
+import com.podium.technicalchallenge.viewModel.DefaultViewmodel
 
 @Composable
 fun HomeScreen(
     onMovieClicked : (LocalMovie) -> Unit,
     onGenreClicked: (String)-> Unit,
-    viewmodel: HomeViewmodel = hiltViewModel(),
+    viewmodel: DefaultViewmodel = hiltViewModel(),
 ) {
     viewmodel.getBestFiveMoviesByRating()
     val topMovies = viewmodel.bestMoviesLiveData .observeAsState()
@@ -308,6 +308,4 @@ fun GenreItem(genre: String, onGenreClicked: (String) -> Unit, padding : Padding
             ))
         }
     }
-
-
 }

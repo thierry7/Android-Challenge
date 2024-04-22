@@ -22,7 +22,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -56,12 +55,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.podium.technicalchallenge.R
 import com.podium.technicalchallenge.entity.LocalMovie
-import com.podium.technicalchallenge.viewModel.HomeViewmodel
+import com.podium.technicalchallenge.viewModel.DefaultViewmodel
 
 @Composable
 fun GenreScreen(
     genreName: String,
-    viewmodel: HomeViewmodel = hiltViewModel()
+    viewmodel: DefaultViewmodel = hiltViewModel()
 ) {
     viewmodel.getListMovieByGenre(genreName)
     val genres by viewmodel.listOfMovieByGenre.observeAsState()
