@@ -8,7 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.podium.technicalchallenge.entity.LocalMovie
 import com.podium.technicalchallenge.network.MovieRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @SuppressLint("SuspiciousIndentation")
@@ -39,7 +41,9 @@ class DefaultViewmodel @Inject constructor(
     init {
         getAllMovies()
         viewModelScope.launch {
-            repo.loadMovies()
+            withContext(Dispatchers.IO){
+                repo.loadMovies()
+            }
 
         }
     }
