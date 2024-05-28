@@ -42,7 +42,8 @@ class DefaultViewmodel @Inject constructor(
         getAllMovies()
         viewModelScope.launch {
             withContext(Dispatchers.IO){
-                repo.loadMovies()
+                _movieList.postValue(repo.getAllMovies())
+
             }
 
         }
